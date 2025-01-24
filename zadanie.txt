@@ -1,0 +1,27 @@
+Twoim zadaniem jest utworzenie systemu kupowania i rezerwacji biletów w pociągach.
+Użyj HTML, CSS i JavaScript oraz wykorzystaj jQuery i AJAX w komplecie z dowolnym programem mockującym zapytania w celu stworzenia dynamicznej treści strony.
+Całość ma znaleźć się w jednym pliku .html, .css i .js.
+
+Układ strony ma prezentować się następująco:
+- Baner: obrazek zajmujący całą szerokość strony z logiem, minimalna wysokość 128px, ucinany od lewej.
+Po prawej stronie zegar analogowy z przeskakującą wskazówką sekundową, pod nim aktualna godzina pisana cyframi.
+Na dole baneru pasek na przewijające się ogłoszenia i utrudnienia. Na pasku po prawej stronie (pod zegarem) zawartość koszyka.
+- Treść: Formularz do wyszukiwania połączeń. Pola ze stacją początkową i docelową z wyświetlaniem możliwych podpowiedzi. Data i godzina.
+Po kliknięciu przycisku "Szukaj" powinna pojawić się nam lista dostępnych połączeń: stacja początkowa i docelowa, godzina odjazdu i przyjazdu,
+dzień przejazdu, cena biletu, kategoria pociągu.
+Po wybraniu pociągu powinien pojawić się nam skład pociągu z wagonami. Każdy wagon ma numer, i może mieć klasę 1 lub 2.
+Kliknięcie na wagon musi wyświetlić pulę miejsc do zajęcia w formie schematu wagonu, z wyróżnieniem miejsc już zajętych i wolnych wraz z numerami i kierunkiem miejsc.
+Poniżej należy umieścić "kartkę-bilet" z informacjami o pociągu, a pod nim listę podróżnych.
+Lista podróżnych powinna mieć możliwość dodania dowolnej ilości podróżnych bądź ich usunięcia, chyba że zostanie jeden. Każdy podróżny musi podać imię i nazwisko.
+Każdemu podróżnemu powinna być możliwość przydzielenia miejsca, bądź kupna bez rezerwacji miejsca, włączając możliwość rezerwacji z różnych wagonów.
+Każdy podróżny powinien mieć możliwość wyboru typu taryfy: zwykła bądź ulgowa (50% ceny).
+Na dole biletu powinna być podana cena, aktualizowana automatycznie na podstawie wyborów dokonanych przez użytkownika.
+Na samym końcu mają być dostępne dwa przyciski: dodaj do koszyka i przejdź do kasy.
+Koszyk powinien mieć możliwość przyjęcia dowolnej liczby biletów.
+W podsumowaniu należy wyświetlić wszystkie bilety w dokładnie takiej formie jak przy ich zakupie. Każdy bilet na liście powinien mieć możliwość jego edycji oraz usunięcia.
+Na dole powinna być wypisana łączna cena wszystkich biletów, pole do wpisania adresu e-mail oraz przycisk przejścia do płatności.
+Brak lub nieprawidłowy adres e-mail powinien zablokować możliwość przejścia dalej.
+Płatność musi być zrobiona asynchronicznie: przejście do płatności wyświetli ekran oczekiwania,
+który może zakończyć się sukcesem lub porażką w momencie otrzymania informacji zwrotnej.
+Sukces czyści koszyk, wyświetla ekran sukcesu i informuje o wysłanych biletach i numerze zamówienia.
+Błąd nie czyści koszyka i powinien pozwolić na powrót do podsumowania koszyka.

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css"/>
+    <script src="../jquery.js"></script>
+    <script src="script.js"></script>
+    <title>Sprzedaż biletów</title>
+</head>
+<body>
+    <div id="banner">
+        <div id="bannerbg">
+
+        </div>
+        <div id="stripestick">
+            <div id="stripe">
+                <div id="stripeclock">21:30:04</div>
+                <div id="stripetext">
+                    <marquee id="stripecontent">
+                        <div class="stripeline"><div class="stripelwrap">Test nowego systemu Informacji Pasażerskiej.</div></div>
+                        <div class="stripeline"><div class="stripelwrap">System w budowie.</div></div>
+                        <div class="stripeline"><div class="stripelwrap">Jeżeli to widzisz, JavaScript nie działa...</div></div>
+                    </marquee>
+                </div>
+                <div id="stripecart">Koszyk (0)</div>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        <div id="pagemain" class="page visible">
+            <h1>Witamy w systemie sprzedaży biletów!</h1>
+            <div class="search info">
+                <h2>Rozpocznij swoją podróż!</h2>
+                <div class="inputs">
+                    <div class="input">
+                        <label for="station1">Skąd?</label>
+                        <input type="text" id="station1" placeholder="Stacja początkowa">
+                    </div>
+                    <div class="input">
+                        <label for="station2">Dokąd?</label>
+                        <input type="text" id="station2" placeholder="Stacja końcowa">
+                    </div>
+                    <div class="input">
+                        <label for="date">Kiedy?</label>
+                        <input type="date" id="date">
+                    </div>
+                    <div class="input">
+                        <label for="time">O której?</label>
+                        <input type="time" id="time">
+                    </div>
+                </div>
+                <div class="button">
+                    <button id="search">Szukaj połączeń!</button>
+                </div>
+            </div>
+        </div>
+        <div id="pagetrain" class="page">
+            <h1>Wyniki wyszukiwania pociągów</h1>
+            <div id="trains">
+                <div class="train info">
+                    <div class="traininfo">
+                        <div class="name">IC&nbsp;5123<br/>BAŁTYK</div>
+                        <div class="duration">Czas jazdy: <b>2h&nbsp;55min</b></div>
+                    </div>
+                    <div class="times">
+                        <div class="station left">
+                            <div class="sname">Gdańsk Główny</div>
+                            <div class="time">15:21</div>
+                        </div>
+                        <div class="separator">>>></div>
+                        <div class="station right">
+                            <div class="sname">Warszawa Wschodnia</div>
+                            <div class="time">18:16</div>
+                        </div>
+                    </div>
+                    <div class="prices">
+                        <div class="price">
+                            <div class="class">
+                                <span class="class2">klasa 2</span>
+                                <div class="sub">bez miejscówki</div>
+                            </div>
+                            <div class="value">79,99</div>
+                        </div>
+                        <div class="price">
+                            <div class="class">
+                                <span class="class2">klasa 2</span>
+                                <div class="sub">z miejscówką</div>
+                            </div>
+                            <div class="value">89,99</div>
+                        </div>
+                        <div class="price">
+                            <div class="class">
+                                <span class="class1">klasa 1</span>
+                            </div>
+                            <div class="value">149,99</div>
+                        </div>
+                    </div>
+                    <div class="select">
+                        <button id="trainselect_1">Wybierz</button>
+                    </div>
+                </div>
+                <div class="train info">
+                    <div class="traininfo">
+                        <div class="name">TLK&nbsp;51101<br/>WYBRZEŻE</div>
+                        <div class="duration">Czas jazdy: <b>3h&nbsp;18min</b></div>
+                    </div>
+                    <div class="times">
+                        <div class="station left">
+                            <div class="sname">Gdańsk Główny</div>
+                            <div class="time">15:36</div>
+                        </div>
+                        <div class="separator">>>></div>
+                        <div class="station right">
+                            <div class="sname">Warszawa Wschodnia</div>
+                            <div class="time">18:54</div>
+                        </div>
+                    </div>
+                    <div class="prices">
+                        <div class="price">
+                            <div class="class">
+                                <span class="class2">klasa 2</span>
+                                <div class="sub">bez miejscówki</div>
+                            </div>
+                            <div class="value">34,99</div>
+                        </div>
+                        <div class="price">
+                            <div class="class">
+                                <span class="class2">klasa 2</span>
+                                <div class="sub">z miejscówką</div>
+                            </div>
+                            <div class="value">44,99</div>
+                        </div>
+                        <div class="price">
+                            <div class="class">
+                                <span class="class1">klasa 1</span>
+                            </div>
+                            <div class="value">89,99</div>
+                        </div>
+                    </div>
+                    <div class="select">
+                        <button id="trainselect_2">Wybierz</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="pageticket" class="page">
+            <h1>Szczegóły połączenia</h1>
+            <div class="failure">Musisz najpierw wybrać miejsce na schemacie, a dopiero potem kliknąć <b>[Wybierz miejsce ze schematu]</b> na bilecie.</div>
+            <h2>Skład pociągu</h2>
+            <div class="consist info">
+                <div class="direction">
+                    Kierunek jazdy
+                    <div class="arrow"><<<</div>
+                </div>
+                <div class="wagons">
+                    <div class="wagon loco">
+                        <div class="icon"></div>
+                        <div class="label">Lokomotywa</div>
+                    </div>
+                    <div id="wagon_11" class="wagon class2 selected">
+                        <div class="icon">2</div>
+                        <div class="label">Wagon 11</div>
+                    </div>
+                    <div id="wagon_12" class="wagon class2">
+                        <div class="icon">2</div>
+                        <div class="label">Wagon 12</div>
+                    </div>
+                    <div id="wagon_13" class="wagon class1">
+                        <div class="icon">1</div>
+                        <div class="label">Wagon 13</div>
+                    </div>
+                </div>
+                <div class="direction">
+                    Kierunek jazdy
+                    <div class="arrow"><<<</div>
+                </div>
+            </div>
+            <h2>Schemat miejsc</h2>
+            <div class="wagonl info">
+                Wybierz wagon, aby wyświetlić jego układ wnętrza.
+                <div class="layoutscroll">
+                    <div class="layout">
+                        <div class="column class1">
+                            <div class="tile seatl"><div class="number">11</div></div>
+                            <div class="tile seatl"><div class="number">12</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatl"><div class="number">15</div></div>
+                            <div class="tile seatl"><div class="number">16</div></div>
+                        </div>
+                        <div class="column class1">
+                            <div class="tile tableu1"></div>
+                            <div class="tile tableu2"></div>
+                            <div class="tile"></div>
+                            <div class="tile tabled2"></div>
+                            <div class="tile tabled1"></div>
+                        </div>
+                        <div class="column class1">
+                            <div class="tile seatr"><div class="number">13</div></div>
+                            <div class="tile seatr"><div class="number">14</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatr"><div class="number">17</div></div>
+                            <div class="tile seatr"><div class="number">18</div></div>
+                        </div>
+                        <div class="column class1">
+                            <div class="tile seatl"><div class="number">21</div></div>
+                            <div class="tile seatl"><div class="number">22</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatl"><div class="number">25</div></div>
+                            <div class="tile seatl"><div class="number">26</div></div>
+                        </div>
+                        <div class="column class1">
+                            <div class="tile tableu1"></div>
+                            <div class="tile tableu2"></div>
+                            <div class="tile"></div>
+                            <div class="tile tabled2"></div>
+                            <div class="tile tabled1"></div>
+                        </div>
+                        <div class="column class1">
+                            <div class="tile seatr"><div class="number">23</div></div>
+                            <div class="tile seatr"><div class="number">24</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatr"><div class="number">27</div></div>
+                            <div class="tile seatr"><div class="number">28</div></div>
+                        </div>
+                        <div class="column class1">
+                            <div class="tile seatl"><div class="number">31</div></div>
+                            <div class="tile seatl"><div class="number">32</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatl"><div class="number">35</div></div>
+                            <div class="tile seatl"><div class="number">36</div></div>
+                        </div>
+                        <div class="column class1">
+                            <div class="tile tableu1"></div>
+                            <div class="tile tableu2"></div>
+                            <div class="tile"></div>
+                            <div class="tile tabled2"></div>
+                            <div class="tile tabled1"></div>
+                        </div>
+                        <div class="column class1">
+                            <div class="tile seatr"><div class="number">33</div></div>
+                            <div class="tile seatr"><div class="number">34</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatr"><div class="number">37</div></div>
+                            <div class="tile seatr"><div class="number">38</div></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile seatl"><div class="number">41</div></div>
+                            <div class="tile seatl"><div class="number">42</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatl"><div class="number">45</div></div>
+                            <div class="tile seatl"><div class="number">46</div></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile tableu1"></div>
+                            <div class="tile tableu2"></div>
+                            <div class="tile"></div>
+                            <div class="tile tabled2"></div>
+                            <div class="tile tabled1"></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile seatr"><div class="number">43</div></div>
+                            <div class="tile seatr"><div class="number">44</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatr"><div class="number">47</div></div>
+                            <div class="tile seatr"><div class="number">48</div></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile seatl"><div class="number">51</div></div>
+                            <div class="tile seatl"><div class="number">52</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatl"><div class="number">55</div></div>
+                            <div class="tile seatl"><div class="number">56</div></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile tableu1"></div>
+                            <div class="tile tableu2"></div>
+                            <div class="tile"></div>
+                            <div class="tile tabled2"></div>
+                            <div class="tile tabled1"></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile seatr"><div class="number">53</div></div>
+                            <div class="tile seatr"><div class="number">54</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatr"><div class="number">57</div></div>
+                            <div class="tile seatr"><div class="number">58</div></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile seatl"><div class="number">61</div></div>
+                            <div class="tile seatl"><div class="number">62</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatl"><div class="number">65</div></div>
+                            <div class="tile seatl"><div class="number">66</div></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile tableu1"></div>
+                            <div class="tile tableu2"></div>
+                            <div class="tile"></div>
+                            <div class="tile tabled2"></div>
+                            <div class="tile tabled1"></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile seatr"><div class="number">63</div></div>
+                            <div class="tile seatr"><div class="number">64</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatr"><div class="number">67</div></div>
+                            <div class="tile seatr"><div class="number">68</div></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile seatl"><div class="number">71</div></div>
+                            <div class="tile seatl"><div class="number">72</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatl"><div class="number">75</div></div>
+                            <div class="tile seatl"><div class="number">76</div></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile tableu1"></div>
+                            <div class="tile tableu2"></div>
+                            <div class="tile"></div>
+                            <div class="tile tabled2"></div>
+                            <div class="tile tabled1"></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile seatr"><div class="number">73</div></div>
+                            <div class="tile seatr"><div class="number">74</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatr"><div class="number">77</div></div>
+                            <div class="tile seatr"><div class="number">78</div></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile seatl"><div class="number">81</div></div>
+                            <div class="tile seatl"><div class="number">82</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatl"><div class="number">85</div></div>
+                            <div class="tile seatl"><div class="number">86</div></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile tableu1"></div>
+                            <div class="tile tableu2"></div>
+                            <div class="tile"></div>
+                            <div class="tile tabled2"></div>
+                            <div class="tile tabled1"></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile seatr"><div class="number">83</div></div>
+                            <div class="tile seatr"><div class="number">84</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatr"><div class="number">87</div></div>
+                            <div class="tile seatr"><div class="number">88</div></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile seatl"><div class="number">91</div></div>
+                            <div class="tile seatl"><div class="number">92</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatl"><div class="number">95</div></div>
+                            <div class="tile seatl"><div class="number">96</div></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile tableu1"></div>
+                            <div class="tile tableu2"></div>
+                            <div class="tile"></div>
+                            <div class="tile tabled2"></div>
+                            <div class="tile tabled1"></div>
+                        </div>
+                        <div class="column class2">
+                            <div class="tile seatr"><div class="number">93</div></div>
+                            <div class="tile seatr"><div class="number">94</div></div>
+                            <div class="tile"></div>
+                            <div class="tile seatr"><div class="number">97</div></div>
+                            <div class="tile seatr"><div class="number">98</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h1>Kup bilet</h1>
+            <div class="ticketinfo">
+                <div class="traininfo">
+                    <div class="line">
+                        Pociąg: <b>TLK 51101 WYBRZEŻE</b>
+                        <div class="right">Data przejazdu: <b>27.01.2025</b></div>
+                    </div>
+                    <div class="line">
+                        Ze stacji: <b>Gdańsk Główny</b>
+                        <div class="right">odj. <b>15:36</b></div>
+                    </div>
+                    <div class="line">
+                        Do stacji: <b>Warszawa Wschodnia</b>
+                        <div class="right">przyj. <b>18:54</b></div>
+                    </div>
+                </div>
+                <div class="reservation">
+                    <div class="header">
+                        Pasażer 1
+                        <div class="button" id="delreservation_1">[Usuń]</div>
+                    </div>
+                    <label for="name_1">Imię i nazwisko:</label>
+                    <input type="text" id="name_1" placeholder="Imię i nazwisko">
+                    <div id="place_1">
+                        Wagon <b>11</b>, miejsce <b>32</b> (<span class="class1">1 klasa</span>)
+                        <div class="button" id="delassign_1">[Usuń rezerwację miejsca]</div>
+                    </div>
+                    <div class="price">Cena: 49,99 zł</div>
+                </div>
+                <div class="reservation">
+                    <div class="header">
+                        Pasażer 2
+                        <div class="button" id="delreservation_2">[Usuń]</div>
+                    </div>
+                    <label for="name_2">Imię i nazwisko:</label>
+                    <input type="text" id="name_2" placeholder="Imię i nazwisko">
+                    <div id="place_2">
+                        Brak rezerwacji (<span class="class2">2 klasa</span>)
+                        <div class="button" id="assign_2">[Wybierz miejsce ze schematu]</div>
+                    </div>
+                    <div class="price">Cena: 39,99 zł</div>
+                </div>
+                <div class="total">
+                    <div class="price">Razem: 79,98 zł</div>
+                </div>
+                <button id="addreservation">Dodaj pasażera</button>
+                <button id="addticket">Do koszyka</button>
+            </div>
+        </div>
+        <div id="pageticketadd" class="page">
+            <h1>Kup bilet</h1>
+            <div class="success">
+                Bilet został dodany do koszyka.
+                <br/>
+                Możesz teraz:
+                <button id="newreturnsearch">Wyszukać połączenie z powrotem</button>
+                <button id="gotomain">Wyszukać nowe połączenie</button>
+                <button id="gotocart">Przejść do koszyka i opłacić bilety</button>
+            </div>
+        </div>
+        <div id="pagecart" class="page">
+            <h1>Koszyk</h1>
+            <div class="cartentry info">
+                <div class="dateinfo">
+                    27.01.2025
+                </div>
+                <div class="traininfo">
+                    <div class="name">TLK&nbsp;51101 WYBRZEŻE</div>
+                    <div class="duration">Czas jazdy: <b>3h&nbsp;18min</b></div>
+                    <div class="duration"><b>2</b> pasażerów</div>
+                </div>
+                <div class="times">
+                    <div class="station left">
+                        <div class="sname">Gdańsk Główny</div>
+                        <div class="time">15:36</div>
+                    </div>
+                    <div class="separator">>>></div>
+                    <div class="station right">
+                        <div class="sname">Warszawa Wschodnia</div>
+                        <div class="time">18:54</div>
+                    </div>
+                </div>
+                <div class="price">
+                    <div class="header">Do zapłaty:</div>
+                    <div class="value">79,98&nbsp;zł</div>
+                </div>
+                <div class="buttons">
+                    <button id="ticketedit_1">Edytuj</button>
+                    <button id="ticketdel_1"><span class="danger">Usuń</span></button>
+                </div>
+            </div>
+            <div class="cartentry info">
+                <div class="dateinfo">
+                    28.01.2025
+                </div>
+                <div class="traininfo">
+                    <div class="name">TLK&nbsp;15101 WYBRZEŻE</div>
+                    <div class="duration">Czas jazdy: <b>3h&nbsp;23min</b></div>
+                    <div class="duration"><b>2</b> pasażerów</div>
+                </div>
+                <div class="times">
+                    <div class="station left">
+                        <div class="sname">Warszawa Wschodnia</div>
+                        <div class="time">08:11</div>
+                    </div>
+                    <div class="separator">>>></div>
+                    <div class="station right">
+                        <div class="sname">Gdańsk Główny</div>
+                        <div class="time">11:34</div>
+                    </div>
+                </div>
+                <div class="price">
+                    <div class="header">Do zapłaty:</div>
+                    <div class="value">79,98&nbsp;zł</div>
+                </div>
+                <div class="buttons">
+                    <button id="ticketedit_2">Edytuj</button>
+                    <button id="ticketdel_2"><span class="danger">Usuń</span></button>
+                </div>
+            </div>
+            <div class="cartsummary">
+                <div class="price">
+                    <div class="header">Łącznie do zapłaty:</div>
+                    <div class="value">145,39 zł</div>
+                </div>
+                <button id="payment">Opłać bilety</button>
+            </div>
+        </div>
+        <div id="pagepayment" class="page">
+            <h1>Płatność</h1>
+            <div class="info">
+                Płatność jest w trakcie przetwarzania. Proszę chwilę poczekać...
+            </div>
+            <div class="success">
+                Płatność zrealizowana! Możesz zobaczyć swoje bilety w koszyku.
+                <button id="gotocart">Przejdź do koszyka</button>
+                <button id="gotomain">Strona główna</button>
+            </div>
+            <div class="failure">
+                Płatność nie powiodła się... Możesz ponowić próbę płatności przechodząc do koszyka.
+                <button id="gotocart">Przejdź do koszyka</button>
+                <button id="gotomain">Strona główna</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

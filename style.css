@@ -1,0 +1,657 @@
+body, input, button {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+body {
+    background-image: linear-gradient(#359, #237);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    font-size: 16px;
+    margin: 0px;
+}
+
+/* Baner */
+
+#bannerbg {
+    background-image: linear-gradient(#48f, #6af);
+    height: 150px;
+}
+
+/* Pasek pod banerem (informacje, koszyk) */
+
+#stripestick {
+    position: sticky;
+    top: 0px;
+    z-index: -1;
+}
+
+#stripe {
+    display: flex;
+    flex-direction: row;
+    background-image: linear-gradient(#888, #777);
+    color: white;
+    height: 30px;
+}
+
+#stripetext {
+    flex-grow: 1;
+    height: 100%;
+    align-content: center;
+    white-space: nowrap;
+}
+
+#stripetext .stripeline {
+    display: inline-block;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#stripetext .stripeline .stripelwrap {
+    display: list-item;
+}
+
+#stripetext .stripeline:first-child .stripelwrap {
+    list-style: none;
+}
+
+#stripecart, #stripeclock {
+    flex-shrink: 0;
+    background-image: linear-gradient(#777, #666);
+    width: 150px;
+    height: 100%;
+    text-align: center;
+    align-content: center;
+}
+
+/* Tresc strony */
+
+#content {
+    background-color: #eee8;
+    border: 2px solid #48f;
+    border-radius: 5px;
+    width: 70%;
+    margin: auto;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    padding: 15px;
+}
+
+#content h1 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 170%;
+    text-transform: uppercase;
+}
+
+#content h1::first-letter {
+    font-size: 130%;
+}
+
+#content h2 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    font-size: 150%;
+}
+
+/* Ukryj strony na ktorych nie jestesmy */
+
+#content .page:not(.visible) {
+    display: none;
+}
+
+/********************/
+/*  Strona glowna   */
+/********************/
+
+#pagemain .search {
+    width: 70%;
+    padding-top: 0px;
+}
+
+#pagemain .search .inputs {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    font-weight: bold;
+}
+
+#pagemain .search .inputs .input {
+    display: flex;
+    flex-direction: column;
+}
+
+#pagemain .search .button {
+    margin-top: 10px;
+    text-align: center;
+}
+
+/********************/
+/*  Lista pociagow  */
+/********************/
+
+#pagetrain .train {
+    display: flex;
+    flex-direction: row;
+    width: 70%;
+}
+
+#pagetrain .train .traininfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#pagetrain .train .traininfo .name {
+    font-size: 90%;
+    font-weight: bold;
+}
+
+#pagetrain .train .traininfo .duration {
+    font-size: 80%;
+}
+
+/* Godziny odjazdu i przyjazdu */
+
+#pagetrain .train .times {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin: auto;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+#pagetrain .train .times .station.left {
+    text-align: right;
+    max-width: 40%;
+    margin: auto;
+    margin-bottom: 0px;
+}
+
+#pagetrain .train .times .separator {
+    text-align: center;
+    font-size: 180%;
+    margin: auto;
+    margin-bottom: 0px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#pagetrain .train .times .station.right {
+    text-align: left;
+    max-width: 40%;
+    margin: auto;
+    margin-bottom: 0px;
+}
+
+#pagetrain .train .times .station .sname {
+    font-size: 80%;
+}
+
+#pagetrain .train .times .station .time {
+    font-size: 170%;
+    font-weight: bold;
+}
+
+/* Ceny biletow */
+
+#pagetrain .train .prices {
+    display: flex;
+    flex-direction: row;
+}
+
+#pagetrain .train .price {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 90px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+#pagetrain .train .price:not(:last-child) {
+    border-right: 1px solid #0008;
+}
+
+#pagetrain .train .price .class {
+    font-size: 90%;
+}
+
+#pagetrain .train .price .class .sub {
+    font-size: 70%;
+    margin-top: -2px;
+}
+
+#pagetrain .train .price .value {
+    font-size: 140%;
+    font-weight: bold;
+    text-align: right;
+}
+
+#pagetrain .train .select button {
+    height: 100%;
+    margin-left: 5px;
+}
+
+/********************/
+/* Kupowanie biletu */
+/********************/
+
+/* Sklad pociagu */
+
+#pageticket .consist {
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    overflow-x: scroll;
+}
+
+#pageticket .consist .direction {
+    width: 100px;
+    margin: auto;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 80%;
+    text-align: center;
+}
+
+#pageticket .consist .direction .arrow {
+    font-size: 250%;
+}
+
+#pageticket .consist .wagons {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+/* Poszczegolne wagony */
+
+#pageticket .consist .wagons .wagon {
+    padding-top: 5px;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+#pageticket .consist .wagons .wagon .icon {
+    color: #fff;
+    border-radius: 10px 10px 0px 0px;
+    width: 100px;
+    height: 35px;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#pageticket .consist .wagons .wagon.loco .icon {
+    background-color: #aaa8;
+    border: 2px solid #aaa;
+    border-radius: 25px 10px 0px 10px;
+}
+
+#pageticket .consist .wagons .wagon.class1 .icon {
+    background-color: #b828;
+    border: 2px solid #b82;
+}
+
+#pageticket .consist .wagons .wagon.class2 .icon {
+    background-color: #2a08;
+    border: 2px solid #2a0;
+}
+
+#pageticket .consist .wagons .wagon .label {
+    text-align: center;
+}
+
+/* Najechanie na wagon */
+
+#pageticket .consist .wagons .wagon:not(.loco):not(.selected):hover {
+    background-color: #ff78;
+    cursor: pointer;
+}
+
+#pageticket .consist .wagons .wagon:not(.loco):not(.selected):hover .label {
+    font-weight: bold;
+}
+
+/* Wybrany wagon */
+
+#pageticket .consist .wagons .wagon.selected {
+    background-color: #00f2;
+}
+
+#pageticket .consist .wagons .wagon.selected .icon {
+    border: 2px solid blue;
+}
+
+#pageticket .consist .wagons .wagon.selected .label {
+    color: blue;
+    font-weight: bold;
+}
+
+/* Uklad wnetrza wagonu */
+
+#pageticket .wagonl .layoutscroll {
+    border: 2px solid #0008;
+    overflow-x: scroll;
+    margin: 5px;
+}
+
+#pageticket .wagonl .layout {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+/* Tlo dla poszczegolnych klas */
+
+#pageticket .wagonl .layout .column {
+    display: flex;
+    flex-direction: column;
+    background-color: #8888;
+}
+
+#pageticket .wagonl .layout .column.class1 {
+    background-color: #b828;
+}
+
+#pageticket .wagonl .layout .column.class2 {
+    background-color: #2a08;
+}
+
+/* Poszczegolne siedzenia */
+
+#pageticket .wagonl .layout .column .tile {
+    width: 40px;
+    height: 40px;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#pageticket .wagonl .layout .column .tile .number {
+    margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+#pageticket .wagonl .layout .column .tile.seatl {
+    background-image: url("tiles/seatl.png");
+}
+
+#pageticket .wagonl .layout .column .tile.seatr {
+    background-image: url("tiles/seatr.png");
+}
+
+#pageticket .wagonl .layout .column .tile.tableu1 {
+    background-image: url("tiles/tableu1.png");
+}
+
+#pageticket .wagonl .layout .column .tile.tableu2 {
+    background-image: url("tiles/tableu2.png");
+}
+
+#pageticket .wagonl .layout .column .tile.tabled1 {
+    background-image: url("tiles/tabled1.png");
+}
+
+#pageticket .wagonl .layout .column .tile.tabled2 {
+    background-image: url("tiles/tabled2.png");
+}
+
+/* Kartka z informacjami o bilecie */
+
+#pageticket .ticketinfo {
+    background-color: #fea;
+    box-shadow: 5px 5px #0008;
+    font-family: 'Courier New', Courier, monospace;
+    width: 60%;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+#pageticket .line .right {
+    float: right;
+}
+
+#pageticket .traininfo {
+    padding: 5px;
+}
+
+#pageticket .reservation {
+    border-top: 1px solid #0008;
+    padding: 5px;
+}
+
+#pageticket .reservation .header {
+    font-weight: bold;
+}
+
+#pageticket .reservation .price {
+    font-weight: bold;
+    text-align: right;
+}
+
+#pageticket .reservation input {
+    height: 16px;
+}
+
+#pageticket .reservation .button {
+    float: right;
+    font-weight: normal;
+    color: blue;
+}
+
+#pageticket .reservation .button:hover {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#pageticket .total {
+    border-top: 1px solid #0008;
+    padding: 5px;
+}
+
+#pageticket .total .price {
+    font-size: 200%;
+    font-weight: bold;
+    text-align: right;
+}
+
+/********************/
+/*   Lista biletow  */
+/********************/
+
+#pagecart .cartentry {
+    display: flex;
+    flex-direction: row;
+    width: 70%;
+}
+
+#pagecart .cartentry .dateinfo {
+    font-size: 120%;
+    font-weight: bold;
+    margin: auto;
+    margin-left: 5px;
+    margin-right: 15px;
+}
+
+#pagecart .cartentry .traininfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#pagecart .cartentry .traininfo .name {
+    font-size: 90%;
+    font-weight: bold;
+}
+
+#pagecart .cartentry .traininfo .duration {
+    font-size: 80%;
+}
+
+/* Godziny odjazdu i przyjazdu */
+
+#pagecart .cartentry .times {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin: auto;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+#pagecart .cartentry .times .station.left {
+    text-align: right;
+    max-width: 40%;
+    margin: auto;
+    margin-bottom: 0px;
+}
+
+#pagecart .cartentry .times .separator {
+    text-align: center;
+    font-size: 180%;
+    margin: auto;
+    margin-bottom: 0px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#pagecart .cartentry .times .station.right {
+    text-align: left;
+    max-width: 40%;
+    margin: auto;
+    margin-bottom: 0px;
+}
+
+#pagecart .cartentry .times .station .sname {
+    font-size: 80%;
+}
+
+#pagecart .cartentry .times .station .time {
+    font-size: 170%;
+    font-weight: bold;
+}
+
+/* Cena biletu */
+
+#pagecart .cartentry .price {
+    width: 140px;
+    margin: auto;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+#pagecart .cartentry .price .header {
+    font-size: 80%;
+}
+
+#pagecart .cartentry .price .value {
+    font-size: 170%;
+    font-weight: bold;
+    text-align: right;
+}
+
+#pagecart .cartentry .buttons {
+    display: flex;
+    flex-direction: row;
+}
+
+#pagecart .cartentry .buttons button {
+    height: 100%;
+    margin-left: 5px;
+}
+
+/* Podsumowanie koszyka */
+
+#pagecart .cartsummary {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    width: 70%;
+    margin: auto;
+}
+
+#pagecart .cartsummary .price {
+    width: 160px;
+    margin-right: 20px;
+}
+
+#pagecart .cartsummary .price .header {
+    font-size: 80%;
+}
+
+#pagecart .cartsummary .price .value {
+    font-size: 170%;
+    font-weight: bold;
+    text-align: right;
+}
+
+#pagecart .cartsummary button {
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+/********************/
+/*     Dodatki      */
+/********************/
+
+/* Okienka z informacjami, sukcesem i bledami */
+
+.info {
+    background-color: #eeec;
+    border: 2px solid #44c;
+    border-radius: 5px;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.success {
+    background-color: #8e8c;
+    border: 2px solid #4c4;
+    border-radius: 5px;
+    width: 70%;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 15px;
+}
+
+.failure {
+    background-color: #e88c;
+    border: 2px solid #c44;
+    border-radius: 5px;
+    width: 70%;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 15px;
+}
+
+/* Czerwony kolor przy usuwaniu */
+
+span.danger {
+    color: #f00;
+}
+
+/* Klasy wagonow */
+
+span.class1 {
+    color: #b82;
+    font-weight: bold;
+}
+
+span.class2 {
+    color: #2a0;
+    font-weight: bold;
+}
