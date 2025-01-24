@@ -5,13 +5,13 @@ function price(number) {
     return String(number).replace(".", ",");
 }
 
+// Mocki (dane ktore powinny leciec z serwera)
+
 let mockMessages = [
     "Witamy w Systemie Sprzedaży Biletów! To jest miejsce na wszelkie utrudnienia.",
     "W chwili obecnej trwają prace serwisowe. Za utrudnienia przepraszamy.",
     "Obecnie nie działają:",
-    "Wyszukiwanie pociągów",
-    "Wybieranie pociągu z listy",
-    "Wybieranie wagonów",
+    "Wyszukiwanie pociągów?",
     "Wybieranie miejsca ze schematu",
     "Przypisywanie i usuwanie miejsc do biletów",
     "Dodawanie i usuwanie pasażerów na bilecie",
@@ -41,7 +41,12 @@ let mockTrains = [
             "class2_nores": 79.99,
             "class2": 89.99,
             "class1": 149.99
-        }
+        },
+        "consist": [
+            {"number": 11, "type": "2kl"},
+            {"number": 12, "type": "2kl"},
+            {"number": 13, "type": "1kl"}
+        ]
     },
     {
         "category": "TLK",
@@ -63,19 +68,844 @@ let mockTrains = [
             "class2_nores": 34.99,
             "class2": 44.99,
             "class1": 89.99
-        }
+        },
+        "consist": [
+            {"number": 21, "type": "2kl"},
+            {"number": 22, "type": "2kl"},
+            {"number": 23, "type": "2kl"},
+            {"number": 24, "type": "2kl"},
+            {"number": 25, "type": "1kl"},
+            {"number": 26, "type": "1kl"}
+        ]
     }
 ]
+
+let mockWagonTypes = {
+    "1kl": {
+        "class": "class1",
+        "display": "1",
+        "layout": [
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatl", "number": 11},
+                    {"tile": "seatl", "number": 12},
+                    {},
+                    {"tile": "seatl", "number": 15}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatr", "number": 13},
+                    {"tile": "seatr", "number": 14},
+                    {},
+                    {"tile": "seatr", "number": 16}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatl", "number": 21},
+                    {"tile": "seatl", "number": 22},
+                    {},
+                    {"tile": "seatl", "number": 25}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatr", "number": 23},
+                    {"tile": "seatr", "number": 24},
+                    {},
+                    {"tile": "seatr", "number": 26}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatl", "number": 31},
+                    {"tile": "seatl", "number": 32},
+                    {},
+                    {"tile": "seatl", "number": 35}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatr", "number": 33},
+                    {"tile": "seatr", "number": 34},
+                    {},
+                    {"tile": "seatr", "number": 36}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatl", "number": 41},
+                    {"tile": "seatl", "number": 42},
+                    {},
+                    {"tile": "seatl", "number": 45}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatr", "number": 43},
+                    {"tile": "seatr", "number": 44},
+                    {},
+                    {"tile": "seatr", "number": 46}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatl", "number": 51},
+                    {"tile": "seatl", "number": 52},
+                    {},
+                    {"tile": "seatl", "number": 55}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatr", "number": 53},
+                    {"tile": "seatr", "number": 54},
+                    {},
+                    {"tile": "seatr", "number": 56}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatl", "number": 61},
+                    {"tile": "seatl", "number": 62},
+                    {},
+                    {"tile": "seatl", "number": 65}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatr", "number": 63},
+                    {"tile": "seatr", "number": 64},
+                    {},
+                    {"tile": "seatr", "number": 66}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatl", "number": 71},
+                    {"tile": "seatl", "number": 72},
+                    {},
+                    {"tile": "seatl", "number": 75}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatr", "number": 73},
+                    {"tile": "seatr", "number": 74},
+                    {},
+                    {"tile": "seatr", "number": 76}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatl", "number": 81},
+                    {"tile": "seatl", "number": 82},
+                    {},
+                    {"tile": "seatl", "number": 85}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatr", "number": 83},
+                    {"tile": "seatr", "number": 84},
+                    {},
+                    {"tile": "seatr", "number": 86}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatl", "number": 91},
+                    {"tile": "seatl", "number": 92},
+                    {},
+                    {"tile": "seatl", "number": 95}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {}
+                ]
+            },
+            {
+                "class": "class1",
+                "tiles": [
+                    {"tile": "seatr", "number": 93},
+                    {"tile": "seatr", "number": 94},
+                    {},
+                    {"tile": "seatr", "number": 96}
+                ]
+            }
+        ]
+    },
+    "2kl": {
+        "class": "class2",
+        "display": "2",
+        "layout": [
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 11},
+                    {"tile": "seatl", "number": 12},
+                    {},
+                    {"tile": "seatl", "number": 15},
+                    {"tile": "seatl", "number": 16}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 13},
+                    {"tile": "seatr", "number": 14},
+                    {},
+                    {"tile": "seatr", "number": 17},
+                    {"tile": "seatr", "number": 18}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 21},
+                    {"tile": "seatl", "number": 22},
+                    {},
+                    {"tile": "seatl", "number": 25},
+                    {"tile": "seatl", "number": 26}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 23},
+                    {"tile": "seatr", "number": 24},
+                    {},
+                    {"tile": "seatr", "number": 27},
+                    {"tile": "seatr", "number": 28}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 31},
+                    {"tile": "seatl", "number": 32},
+                    {},
+                    {"tile": "seatl", "number": 35},
+                    {"tile": "seatl", "number": 36}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 33},
+                    {"tile": "seatr", "number": 34},
+                    {},
+                    {"tile": "seatr", "number": 37},
+                    {"tile": "seatr", "number": 38}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 41},
+                    {"tile": "seatl", "number": 42},
+                    {},
+                    {"tile": "seatl", "number": 45},
+                    {"tile": "seatl", "number": 46}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 43},
+                    {"tile": "seatr", "number": 44},
+                    {},
+                    {"tile": "seatr", "number": 47},
+                    {"tile": "seatr", "number": 48}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 51},
+                    {"tile": "seatl", "number": 52},
+                    {},
+                    {"tile": "seatl", "number": 55},
+                    {"tile": "seatl", "number": 56}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 53},
+                    {"tile": "seatr", "number": 54},
+                    {},
+                    {"tile": "seatr", "number": 57},
+                    {"tile": "seatr", "number": 58}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 61},
+                    {"tile": "seatl", "number": 62},
+                    {},
+                    {"tile": "seatl", "number": 65},
+                    {"tile": "seatl", "number": 66}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 63},
+                    {"tile": "seatr", "number": 64},
+                    {},
+                    {"tile": "seatr", "number": 67},
+                    {"tile": "seatr", "number": 68}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 71},
+                    {"tile": "seatl", "number": 72},
+                    {},
+                    {"tile": "seatl", "number": 75},
+                    {"tile": "seatl", "number": 76}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 73},
+                    {"tile": "seatr", "number": 74},
+                    {},
+                    {"tile": "seatr", "number": 77},
+                    {"tile": "seatr", "number": 78}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 81},
+                    {"tile": "seatl", "number": 82},
+                    {},
+                    {"tile": "seatl", "number": 85},
+                    {"tile": "seatl", "number": 86}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 83},
+                    {"tile": "seatr", "number": 84},
+                    {},
+                    {"tile": "seatr", "number": 87},
+                    {"tile": "seatr", "number": 88}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 91},
+                    {"tile": "seatl", "number": 92},
+                    {},
+                    {"tile": "seatl", "number": 95},
+                    {"tile": "seatl", "number": 96}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 93},
+                    {"tile": "seatr", "number": 94},
+                    {},
+                    {"tile": "seatr", "number": 97},
+                    {"tile": "seatr", "number": 98}
+                ]
+            }
+        ]
+    },
+    "12kl": {
+        "class": "class12",
+        "display": "1/2",
+        "layout": [
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 11},
+                    {"tile": "seatl", "number": 12},
+                    {},
+                    {"tile": "seatl", "number": 15},
+                    {"tile": "seatl", "number": 16}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 13},
+                    {"tile": "seatr", "number": 14},
+                    {},
+                    {"tile": "seatr", "number": 17},
+                    {"tile": "seatr", "number": 18}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 21},
+                    {"tile": "seatl", "number": 22},
+                    {},
+                    {"tile": "seatl", "number": 25},
+                    {"tile": "seatl", "number": 26}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 23},
+                    {"tile": "seatr", "number": 24},
+                    {},
+                    {"tile": "seatr", "number": 27},
+                    {"tile": "seatr", "number": 28}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 31},
+                    {"tile": "seatl", "number": 32},
+                    {},
+                    {"tile": "seatl", "number": 35},
+                    {"tile": "seatl", "number": 36}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 33},
+                    {"tile": "seatr", "number": 34},
+                    {},
+                    {"tile": "seatr", "number": 37},
+                    {"tile": "seatr", "number": 38}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 41},
+                    {"tile": "seatl", "number": 42},
+                    {},
+                    {"tile": "seatl", "number": 45},
+                    {"tile": "seatl", "number": 46}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 43},
+                    {"tile": "seatr", "number": 44},
+                    {},
+                    {"tile": "seatr", "number": 47},
+                    {"tile": "seatr", "number": 48}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 51},
+                    {"tile": "seatl", "number": 52},
+                    {},
+                    {"tile": "seatl", "number": 55},
+                    {"tile": "seatl", "number": 56}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 53},
+                    {"tile": "seatr", "number": 54},
+                    {},
+                    {"tile": "seatr", "number": 57},
+                    {"tile": "seatr", "number": 58}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 61},
+                    {"tile": "seatl", "number": 62},
+                    {},
+                    {"tile": "seatl", "number": 65},
+                    {"tile": "seatl", "number": 66}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 63},
+                    {"tile": "seatr", "number": 64},
+                    {},
+                    {"tile": "seatr", "number": 67},
+                    {"tile": "seatr", "number": 68}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 71},
+                    {"tile": "seatl", "number": 72},
+                    {},
+                    {"tile": "seatl", "number": 75},
+                    {"tile": "seatl", "number": 76}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 73},
+                    {"tile": "seatr", "number": 74},
+                    {},
+                    {"tile": "seatr", "number": 77},
+                    {"tile": "seatr", "number": 78}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 81},
+                    {"tile": "seatl", "number": 82},
+                    {},
+                    {"tile": "seatl", "number": 85},
+                    {"tile": "seatl", "number": 86}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 83},
+                    {"tile": "seatr", "number": 84},
+                    {},
+                    {"tile": "seatr", "number": 87},
+                    {"tile": "seatr", "number": 88}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatl", "number": 91},
+                    {"tile": "seatl", "number": 92},
+                    {},
+                    {"tile": "seatl", "number": 95},
+                    {"tile": "seatl", "number": 96}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "tableu1"},
+                    {"tile": "tableu2"},
+                    {},
+                    {"tile": "tabled2"},
+                    {"tile": "tabled1"}
+                ]
+            },
+            {
+                "class": "class2",
+                "tiles": [
+                    {"tile": "seatr", "number": 93},
+                    {"tile": "seatr", "number": 94},
+                    {},
+                    {"tile": "seatr", "number": 97},
+                    {"tile": "seatr", "number": 98}
+                ]
+            }
+        ]
+    }
+}
+
+// Stan naszej aplikacji
+
+let currentTrain = null;
+let currentWagon = null;
+
+// Reszta kodu
 
 function setPage(page) {
     $(".page").removeClass("visible");
     $("#page" + page).addClass("visible");
 }
 
+function selectWagon(wagon) {
+    let consistDiv = $("#pageticket #consist");
+    consistDiv.find(".wagon").removeClass("selected");
+    consistDiv.find("#wagon_" + wagon.number).addClass("selected");
+    generateWagonLayout(wagon.type);
+}
+
 function generateTrainList() {
     let trainList = $("#pagetrain #trains");
     trainList.empty();
-    let i = 1;
     mockTrains.forEach(train => {
         trainList.append("<div class=\"train info\">");
         let trainDiv = trainList.find(".train").last();
@@ -126,10 +956,62 @@ function generateTrainList() {
         trainDiv.find(".prices .price").last().find(".class .class1").html("klasa 1");
         trainDiv.find(".prices .price").last().find(".value").html(price(train.prices.class1));
         // Przycisk wyboru
-        trainDiv.find(".select").append("<button id=\"trainselect_" + i + "\">");
+        trainDiv.find(".select").append("<button id=\"trainselect\">");
         trainDiv.find(".select button").html("Wybierz");
-        i++;
+        trainDiv.find(".select button").on("click", () => {
+            currentTrain = train;
+            currentWagon = null;
+            setPage("ticket");
+            generateTrainConsist(train);
+            resetWagonLayout();
+        })
     })
+}
+
+function generateTrainConsist(train) {
+    let consistDiv = $("#pageticket #consist");
+    consistDiv.empty();
+    consistDiv.append("<div class=\"wagon loco\">");
+    consistDiv.find(".wagon").last().append("<div class=\"icon\">")
+    consistDiv.find(".wagon").last().append("<div class=\"label\">")
+    consistDiv.find(".wagon").last().find(".label").text("Lokomotywa");
+    train.consist.forEach(wagon => {
+        let wagonData = mockWagonTypes[wagon.type];
+        consistDiv.append("<div id=\"wagon_" + wagon.number + "\" class=\"wagon " + wagonData.class + "\">");
+        let wagonDiv = consistDiv.find(".wagon").last();
+        wagonDiv.append("<div class=\"icon\">")
+        wagonDiv.append("<div class=\"label\">")
+        wagonDiv.find(".icon").text(wagonData.display);
+        wagonDiv.find(".label").text("Wagon " + wagon.number);
+        wagonDiv.on("click", () => {
+            selectWagon(wagon);
+        })
+    });
+}
+
+function resetWagonLayout() {
+    let layoutDiv = $("#pageticket #layout");
+    layoutDiv.html("Wybierz wagon z listy powyżej aby zobaczyć układ jego wnętrza i wybrać miejsce.");
+}
+
+function generateWagonLayout(wagonType) {
+    let layout = mockWagonTypes[wagonType].layout;
+    let layoutDiv = $("#pageticket #layout");
+    layoutDiv.empty();
+    layout.forEach(column => {
+        layoutDiv.append("<div class=\"column " + column.class + "\">");
+        let columnDiv = layoutDiv.find(".column").last();
+        column.tiles.forEach(tile => {
+            columnDiv.append("<div class=\"tile\">");
+            let tileDiv = columnDiv.find(".tile").last();
+            if (tile.tile != undefined) {
+                tileDiv.addClass(tile.tile);
+            }
+            if (tile.number != undefined) {
+                tileDiv.html("<div class=\"number\">" + tile.number + "</div>");
+            }
+        });
+    });
 }
 
 function ready() {
@@ -158,8 +1040,6 @@ function ready() {
         setPage("train");
         generateTrainList();
     })
-
-    // TRAIN SELECT PAGE
 }
 
 $(document).ready(() => {
