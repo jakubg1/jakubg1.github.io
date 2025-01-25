@@ -239,6 +239,12 @@ body {
 /* Kupowanie biletu */
 /********************/
 
+/* Ukryj komunikaty bledow */
+
+#pageticket #error_noselect:not(.visible) {
+    display: none;
+}
+
 /* Sklad pociagu */
 
 #pageticket .consist {
@@ -387,6 +393,40 @@ body {
 
 #pageticket .wagonl .layout .column .tile.seatr {
     background-image: url("tiles/seatr.png");
+}
+
+#pageticket .wagonl .layout .column .tile.seatl.free {
+    background-image: url("tiles/seatl_free.png");
+}
+
+#pageticket .wagonl .layout .column .tile.seatr.free {
+    background-image: url("tiles/seatr_free.png");
+}
+
+#pageticket .wagonl .layout .column .tile.seatl.free:hover {
+    background-image: url("tiles/seatl_hovered.png");
+    cursor: pointer;
+}
+
+#pageticket .wagonl .layout .column .tile.seatr.free:hover {
+    background-image: url("tiles/seatr_hovered.png");
+    cursor: pointer;
+}
+
+#pageticket .wagonl .layout .column .tile.seatl.selected {
+    background-image: url("tiles/seatl_selected.png");
+}
+
+#pageticket .wagonl .layout .column .tile.seatr.selected {
+    background-image: url("tiles/seatr_selected.png");
+}
+
+#pageticket .wagonl .layout .column .tile.seatl.chosen {
+    background-image: url("tiles/seatl_chosen.png");
+}
+
+#pageticket .wagonl .layout .column .tile.seatr.chosen {
+    background-image: url("tiles/seatr_chosen.png");
 }
 
 #pageticket .wagonl .layout .column .tile.tableu1 {

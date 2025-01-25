@@ -2,7 +2,7 @@ console.log("dziala");
 
 // Utility
 function price(number) {
-    return String(number).replace(".", ",");
+    return String(number.toFixed(2)).replace(".", ",");
 }
 
 function date(val) {
@@ -15,12 +15,16 @@ let mockMessages = [
     "Witamy w Systemie Sprzedaży Biletów! To jest miejsce na wszelkie utrudnienia.",
     "W chwili obecnej trwają prace serwisowe. Za utrudnienia przepraszamy.",
     "Obecnie nie działają:",
-    "Wyszukiwanie pociągów?",
-    "Wybieranie miejsca ze schematu",
-    "Przypisywanie i usuwanie miejsc do biletów",
-    "Koszyk",
+    "Wyświetlanie biletów w koszyku",
+    "Usuwanie biletów z koszyka",
     "System płatności",
-    "A nawet zegar się zepsuł... Trzeba wymienić baterie."
+    "A nawet zegar się zepsuł... Trzeba wymienić baterie.",
+    "Fajnie by było gdyby:",
+    "Była responsywność.",
+    "Możliwe było cofanie do poprzedniego kroku.",
+    "System nie przepuszczał dodania biletu bez wypełnienia imienia i nazwiska.",
+    "Płatność w koszyku wymagała adresu e-mail.",
+    "Możliwe byłoby edytowanie biletów."
 ];
 
 let mockTrains = [
@@ -897,14 +901,30 @@ let CLASS_TEXTS = {
 let selectedDate = null;
 let currentTrain = null;
 let currentWagon = null;
-let passengers = [
+let selectedSeat = null;
+let passengers = [];
+let cart = [
     {
-        "name": "Jan Kowalski",
-        "reservation": {
-            "wagon": 11,
-            "seat": 47
-        },
-        "halfPrice": false
+        "date": "2025-01-27",
+        "train": mockTrains[1],
+        "passengers": [
+            {
+                "name": "Jan Kowalski",
+                "reservation": {
+                    "wagon": 21,
+                    "seat": 47
+                },
+                "halfPrice": false
+            },
+            {
+                "name": "Anna Kowalska",
+                "reservation": {
+                    "wagon": 21,
+                    "seat": 48
+                },
+                "halfPrice": false
+            }
+        ]
     }
 ];
 
@@ -928,16 +948,119 @@ function getClassFromReservation(reservation) {
     return mockWagonTypes[targetWagon.type].class;
 }
 
+function getReservationPrice(reservation) {
+    return currentTrain.prices[getClassFromReservation(reservation)];
+}
+
+function getTotalPrice() {
+    let total = 0;
+    passengers.forEach(passenger => {
+        total += getReservationPrice(passenger.reservation);
+    });
+    return total;
+}
+
 function setPage(page) {
     $(".page").removeClass("visible");
     $("#page" + page).addClass("visible");
 }
 
 function selectWagon(wagon) {
+    currentWagon = wagon;
+    selectedSeat = null;
     let consistDiv = $("#pageticket #consist");
     consistDiv.find(".wagon").removeClass("selected");
     consistDiv.find("#wagon_" + wagon.number).addClass("selected");
     generateWagonLayout(wagon.type);
+}
+
+function setSeatState(number, state) {
+    let tileDiv = $("#pageticket #layout").find("#tile_" + number);
+    tileDiv.removeClass("free");
+    tileDiv.removeClass("selected");
+    tileDiv.removeClass("chosen");
+    tileDiv.addClass(state);
+}
+
+function selectSeat(number) {
+    setSeatState(selectedSeat, "free");
+    selectedSeat = number;
+    setSeatState(number, "selected");
+    // Usun komunikat o tym ze nie wybrano miejsca
+    $("#pageticket #error_noselect").removeClass("visible");
+}
+
+function unselectSeat() {
+    setSeatState(selectedSeat, "free");
+    selectedSeat = null;
+}
+
+function selectedSeatToChosen() {
+    setSeatState(selectedSeat, "chosen");
+    selectedSeat = null;
+}
+
+function unchooseSeat(number) {
+    setSeatState(number, "free");
+}
+
+function isSeatChosen(number) {
+    let found = false;
+    passengers.forEach(passenger => {
+        if (passenger.reservation != null && passenger.reservation.wagon == currentWagon.number && passenger.reservation.seat == number) {
+            found = true;
+        }
+    })
+    return found;
+}
+
+function addPassenger() {
+    // Zapisz dane z formularza aby je przywrocic przy regeneracji tabeli
+    savePassengers();
+    passengers.push({"name": "", "reservation": null, "halfPrice": false});
+    generateTicketPassengerList();
+}
+
+function removePassenger(n) {
+    let passenger = passengers[n - 1];
+    if (passenger.reservation != null) {
+        unreservePassenger(n);
+    }
+    // Zapisz dane z formularza aby je przywrocic przy regeneracji tabeli
+    savePassengers();
+    passengers.splice(n - 1, 1);
+    generateTicketPassengerList();
+}
+
+function reservePassenger(n) {
+    if (currentWagon == null || selectedSeat == null) {
+        // Pokaz komunikat o tym ze nie wybrano miejsca
+        $("#pageticket #error_noselect").addClass("visible");
+        return;
+    }
+    let passenger = passengers[n - 1];
+    passenger.reservation = {
+        "wagon": currentWagon.number,
+        "seat": selectedSeat
+    };
+    selectedSeatToChosen();
+    generateTicketPassengerList();
+}
+
+function unreservePassenger(n) {
+    let passenger = passengers[n - 1];
+    unchooseSeat(passenger.reservation.seat);
+    passenger.reservation = null;
+    generateTicketPassengerList();
+}
+
+function savePassengers() {
+    let passengersDiv = $("#pageticket #ticket #passengers");
+    let i = 1;
+    passengers.forEach(passenger => {
+        passenger.name = passengersDiv.find("#name_" + i).val();
+        i++;
+    })
 }
 
 function generateTrainList() {
@@ -998,6 +1121,7 @@ function generateTrainList() {
         trainDiv.find(".select button").on("click", () => {
             currentTrain = train;
             currentWagon = null;
+            selectedSeat = null;
             passengers = [];
             addPassenger();
             setPage("ticket");
@@ -1048,8 +1172,20 @@ function generateWagonLayout(wagonType) {
                 tileDiv.addClass(tile.tile);
             }
             if (tile.number != undefined) {
+                // Musimy zobaczyc czy czasem nie generujemy ukladu dla wagonu z juz zajetymi przez nas miejscami
+                if (isSeatChosen(tile.number)) {
+                    tileDiv.addClass("chosen");
+                } else {
+                    tileDiv.addClass("free");
+                }
+                tileDiv.attr("id", "tile_" + tile.number)
                 tileDiv.html("<div class=\"number\">" + tile.number + "</div>");
             }
+            tileDiv.on("click", () => {
+                if (tile.number != undefined && tileDiv.hasClass("free")) {
+                    selectSeat(tile.number);
+                }
+            })
         });
     });
 }
@@ -1081,13 +1217,16 @@ function generateTicketBase(train) {
     generateTicketPassengerList();
     // Laczna cena
     ticketDiv.find(".total").append("<div class=\"price\">");
-    ticketDiv.find(".total .price").text("Razem: 10000 zł");
+    ticketDiv.find(".total .price").text("Razem: " + price(getTotalPrice()) + " zł");
     // Przyciski
     ticketDiv.find("#addpassenger").text("Dodaj pasażera");
     ticketDiv.find("#addpassenger").on("click", () => {
         addPassenger();
     });
     ticketDiv.find("#addticket").text("Do koszyka");
+    ticketDiv.find("#addticket").on("click", () => {
+        setPage("ticketadd");
+    });
 }
 
 function generateTicketPassengerList() {
@@ -1096,6 +1235,8 @@ function generateTicketPassengerList() {
     let showDeleteButton = passengers.length > 1;
     let i = 1;
     passengers.forEach(passenger => {
+        // Use n, because i marshalled as a parameter will not keep its value properly!
+        let n = i;
         let passengerClass = getClassFromReservation(passenger.reservation);
         passengersDiv.append("<div class=\"passenger\">");
         let passengerDiv = passengersDiv.find(".passenger").last();
@@ -1110,42 +1251,36 @@ function generateTicketPassengerList() {
         if (showDeleteButton) {
             passengerDiv.find(".header").append("<div class=\"button\" id=\"delpassenger_" + i + "\">");
             passengerDiv.find(".header .button").text("[Usuń]");
-            let n = i;
             passengerDiv.find(".header .button").on("click", () => {
                 removePassenger(n);
             });
         }
         // Pole na imie i nazwisko
         passengerDiv.find("label").text("Imię i nazwisko: ");
-        passengerDiv.find("input").text(passenger.name);
+        passengerDiv.find("input").val(passenger.name);
         // Rezerwacja miejsca
         if (passenger.reservation == undefined) {
             passengerDiv.find(".reservation").html("Brak rezerwacji (" + CLASS_TEXTS.class2 + ")");
             passengerDiv.find(".reservation").append("<div class=\"button\" id=\"assign_" + i + "\">");
             passengerDiv.find(".reservation .button").text("[Wybierz miejsce ze schematu]");
+            passengerDiv.find(".reservation .button").on("click", () => {
+                reservePassenger(n);
+            })
         } else {
             passengerDiv.find(".reservation").html("Wagon <b>" + passenger.reservation.wagon + "</b>, miejsce <b>" + passenger.reservation.seat + "</b> (" + CLASS_TEXTS[passengerClass] + ")");
             passengerDiv.find(".reservation").append("<div class=\"button\" id=\"delassign_" + i + "\">");
             passengerDiv.find(".reservation .button").text("[Usuń rezerwację miejsca]");
+            passengerDiv.find(".reservation .button").on("click", () => {
+                unreservePassenger(n);
+            })
         }
         // Cena
-        passengerDiv.find(".price").text("Cena: " + price(currentTrain.prices[passengerClass]) + " zł");
+        passengerDiv.find(".price").text("Cena: " + price(getReservationPrice(passenger.reservation)) + " zł");
         i++;
     });
-}
-
-function addPassenger() {
-    passengers.push({"name": "", "halfPrice": false});
-    generateTicketPassengerList();
-}
-
-function removePassenger(n) {
-    passengers.splice(n - 1, 1);
-    generateTicketPassengerList();
-}
-
-function savePassengers() {
-
+    // zaktualizujmy jeszcze laczna cene
+    let ticketDiv = $("#pageticket #ticket");
+    ticketDiv.find(".total .price").text("Razem: " + price(getTotalPrice()) + " zł");
 }
 
 function ready() {
@@ -1174,6 +1309,20 @@ function ready() {
         selectedDate = searchDate.val();
         setPage("train");
         generateTrainList();
+    })
+
+    // ADD TO CART PAGE
+    let returnTrainBtn = $("#pageticketadd #newreturnsearch");
+    returnTrainBtn.on("click", () => {
+        setPage("train");
+    })
+    let menuBtn = $("#pageticketadd #gotomain");
+    menuBtn.on("click", () => {
+        setPage("main");
+    })
+    let cartBtn = $("#pageticketadd #gotocart");
+    cartBtn.on("click", () => {
+        setPage("cart");
     })
 }
 
