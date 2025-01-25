@@ -428,31 +428,31 @@ body {
     padding: 5px;
 }
 
-#pageticket .reservation {
+#pageticket .passenger {
     border-top: 1px solid #0008;
     padding: 5px;
 }
 
-#pageticket .reservation .header {
+#pageticket .passenger .header {
     font-weight: bold;
 }
 
-#pageticket .reservation .price {
+#pageticket .passenger .price {
     font-weight: bold;
     text-align: right;
 }
 
-#pageticket .reservation input {
+#pageticket .passenger input {
     height: 16px;
 }
 
-#pageticket .reservation .button {
+#pageticket .passenger .button {
     float: right;
     font-weight: normal;
     color: blue;
 }
 
-#pageticket .reservation .button:hover {
+#pageticket .passenger .button:hover {
     font-weight: bold;
     cursor: pointer;
 }

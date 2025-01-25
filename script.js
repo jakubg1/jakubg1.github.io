@@ -5,6 +5,10 @@ function price(number) {
     return String(number).replace(".", ",");
 }
 
+function date(val) {
+    return val.slice(8, 10) + "." + val.slice(5, 7) + "." + val.slice(0, 4);
+}
+
 // Mocki (dane ktore powinny leciec z serwera)
 
 let mockMessages = [
@@ -14,7 +18,6 @@ let mockMessages = [
     "Wyszukiwanie pociągów?",
     "Wybieranie miejsca ze schematu",
     "Przypisywanie i usuwanie miejsc do biletów",
-    "Dodawanie i usuwanie pasażerów na bilecie",
     "Koszyk",
     "System płatności",
     "A nawet zegar się zepsuł... Trzeba wymienić baterie."
@@ -886,10 +889,44 @@ let mockWagonTypes = {
 
 // Stan naszej aplikacji
 
+let CLASS_TEXTS = {
+    "class1": "<span class=\"class1\">1 klasa</span>",
+    "class2": "<span class=\"class2\">2 klasa</span>"
+}
+
+let selectedDate = null;
 let currentTrain = null;
 let currentWagon = null;
+let passengers = [
+    {
+        "name": "Jan Kowalski",
+        "reservation": {
+            "wagon": 11,
+            "seat": 47
+        },
+        "halfPrice": false
+    }
+];
 
 // Reszta kodu
+
+function getClassFromReservation(reservation) {
+    if (reservation == undefined) {
+        return "class2_nores";
+    }
+    let targetWagon = null;
+    currentTrain.consist.forEach(wagon => {
+        if (wagon.number == reservation.wagon) {
+            targetWagon = wagon;
+        }
+    });
+    if (targetWagon == null) {
+        console.log("ERROR: Could not find a matching wagon from reservation:");
+        console.log(reservation);
+        return "class2_nores";
+    }
+    return mockWagonTypes[targetWagon.type].class;
+}
 
 function setPage(page) {
     $(".page").removeClass("visible");
@@ -957,13 +994,16 @@ function generateTrainList() {
         trainDiv.find(".prices .price").last().find(".value").html(price(train.prices.class1));
         // Przycisk wyboru
         trainDiv.find(".select").append("<button id=\"trainselect\">");
-        trainDiv.find(".select button").html("Wybierz");
+        trainDiv.find(".select button").text("Wybierz");
         trainDiv.find(".select button").on("click", () => {
             currentTrain = train;
             currentWagon = null;
+            passengers = [];
+            addPassenger();
             setPage("ticket");
             generateTrainConsist(train);
             resetWagonLayout();
+            generateTicketBase(train);
         })
     })
 }
@@ -1014,6 +1054,100 @@ function generateWagonLayout(wagonType) {
     });
 }
 
+function generateTicketBase(train) {
+    let ticketDiv = $("#pageticket #ticket");
+    ticketDiv.empty();
+    // Rubryczki na kazda sekcje danych na bilecie
+    ticketDiv.append("<div class=\"traininfo\">");
+    ticketDiv.append("<div id=\"passengers\">");
+    ticketDiv.append("<div class=\"total\">");
+    ticketDiv.append("<button id=\"addpassenger\">");
+    ticketDiv.append(" ");
+    ticketDiv.append("<button id=\"addticket\">");
+    // Dane pociagu
+    ticketDiv.find(".traininfo").append("<div class=\"line\">");
+    ticketDiv.find(".traininfo .line").last().html("Pociąg: <b>" + train.category + " " + train.number + " " + train.name + "</b>");
+    ticketDiv.find(".traininfo .line").last().append("<div class=\"right\">");
+    ticketDiv.find(".traininfo .line").last().find(".right").html("Data przejazdu: <b>" + date(selectedDate) + "</b>");
+    ticketDiv.find(".traininfo").append("<div class=\"line\">");
+    ticketDiv.find(".traininfo .line").last().html("Ze stacji: <b>" + train.station1.name + "</b>");
+    ticketDiv.find(".traininfo .line").last().append("<div class=\"right\">");
+    ticketDiv.find(".traininfo .line").last().find(".right").html("odj. <b>" + train.station1.time + "</b>");
+    ticketDiv.find(".traininfo").append("<div class=\"line\">");
+    ticketDiv.find(".traininfo .line").last().html("Do stacji: <b>" + train.station2.name + "</b>");
+    ticketDiv.find(".traininfo .line").last().append("<div class=\"right\">");
+    ticketDiv.find(".traininfo .line").last().find(".right").html("przyj. <b>" + train.station2.time + "</b>");
+    // Rezerwacje
+    generateTicketPassengerList();
+    // Laczna cena
+    ticketDiv.find(".total").append("<div class=\"price\">");
+    ticketDiv.find(".total .price").text("Razem: 10000 zł");
+    // Przyciski
+    ticketDiv.find("#addpassenger").text("Dodaj pasażera");
+    ticketDiv.find("#addpassenger").on("click", () => {
+        addPassenger();
+    });
+    ticketDiv.find("#addticket").text("Do koszyka");
+}
+
+function generateTicketPassengerList() {
+    let passengersDiv = $("#pageticket #ticket #passengers");
+    passengersDiv.empty();
+    let showDeleteButton = passengers.length > 1;
+    let i = 1;
+    passengers.forEach(passenger => {
+        let passengerClass = getClassFromReservation(passenger.reservation);
+        passengersDiv.append("<div class=\"passenger\">");
+        let passengerDiv = passengersDiv.find(".passenger").last();
+        // Rubryczki na kazda sekcje danych pasazera
+        passengerDiv.append("<div class=\"header\">");
+        passengerDiv.append("<label for=\"name_" + i + "\">");
+        passengerDiv.append("<input type=\"text\" id=\"name_" + i + "\" placeholder=\"Imię i nazwisko\">");
+        passengerDiv.append("<div id=\"place_" + i + "\" class=\"reservation\">");
+        passengerDiv.append("<div class=\"price\">");
+        // Naglowek
+        passengerDiv.find(".header").text("Pasażer " + i);
+        if (showDeleteButton) {
+            passengerDiv.find(".header").append("<div class=\"button\" id=\"delpassenger_" + i + "\">");
+            passengerDiv.find(".header .button").text("[Usuń]");
+            let n = i;
+            passengerDiv.find(".header .button").on("click", () => {
+                removePassenger(n);
+            });
+        }
+        // Pole na imie i nazwisko
+        passengerDiv.find("label").text("Imię i nazwisko: ");
+        passengerDiv.find("input").text(passenger.name);
+        // Rezerwacja miejsca
+        if (passenger.reservation == undefined) {
+            passengerDiv.find(".reservation").html("Brak rezerwacji (" + CLASS_TEXTS.class2 + ")");
+            passengerDiv.find(".reservation").append("<div class=\"button\" id=\"assign_" + i + "\">");
+            passengerDiv.find(".reservation .button").text("[Wybierz miejsce ze schematu]");
+        } else {
+            passengerDiv.find(".reservation").html("Wagon <b>" + passenger.reservation.wagon + "</b>, miejsce <b>" + passenger.reservation.seat + "</b> (" + CLASS_TEXTS[passengerClass] + ")");
+            passengerDiv.find(".reservation").append("<div class=\"button\" id=\"delassign_" + i + "\">");
+            passengerDiv.find(".reservation .button").text("[Usuń rezerwację miejsca]");
+        }
+        // Cena
+        passengerDiv.find(".price").text("Cena: " + price(currentTrain.prices[passengerClass]) + " zł");
+        i++;
+    });
+}
+
+function addPassenger() {
+    passengers.push({"name": "", "halfPrice": false});
+    generateTicketPassengerList();
+}
+
+function removePassenger(n) {
+    passengers.splice(n - 1, 1);
+    generateTicketPassengerList();
+}
+
+function savePassengers() {
+
+}
+
 function ready() {
     // Initialize stripe messages
     let stripeContent = $("#stripecontent");
@@ -1032,11 +1166,12 @@ function ready() {
     let searchDate = $("#pagemain #date");
     let searchTime = $("#pagemain #time");
     searchDate.val(date.toISOString().slice(0, 10));
-    searchTime.val(date.getHours() + ":" + (date.getMinutes() < 10 ? "0" : "") + date.getMinutes());
+    searchTime.val((date.getHours() < 10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes() < 10 ? "0" : "") + date.getMinutes());
 
     // Initialize the search button callback
     let searchBtn = $("#pagemain #search");
     searchBtn.on("click", () => {
+        selectedDate = searchDate.val();
         setPage("train");
         generateTrainList();
     })
