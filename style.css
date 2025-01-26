@@ -63,6 +63,7 @@ body {
 
 #stripecart:hover {
     background-image: linear-gradient(#aaa, #888);
+    cursor: pointer;
 }
 
 /* Tresc strony */
