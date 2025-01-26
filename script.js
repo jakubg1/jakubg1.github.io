@@ -15,8 +15,6 @@ let mockMessages = [
     "Witamy w Systemie Sprzedaży Biletów! To jest miejsce na wszelkie utrudnienia.",
     "W chwili obecnej trwają prace serwisowe. Za utrudnienia przepraszamy.",
     "Obecnie nie działają:",
-    "Wyświetlanie biletów w koszyku",
-    "Usuwanie biletów z koszyka",
     "System płatności",
     "A nawet zegar się zepsuł... Trzeba wymienić baterie.",
     "Fajnie by było gdyby:",
@@ -24,7 +22,8 @@ let mockMessages = [
     "Możliwe było cofanie do poprzedniego kroku.",
     "System nie przepuszczał dodania biletu bez wypełnienia imienia i nazwiska.",
     "Płatność w koszyku wymagała adresu e-mail.",
-    "Możliwe byłoby edytowanie biletów."
+    "Możliwe było edytowanie biletów.",
+    "Miejsca zajęte w innych biletach były w tych samych pociągach w tym samym dniu zajęte."
 ];
 
 let mockTrains = [
@@ -83,6 +82,36 @@ let mockTrains = [
             {"number": 24, "type": "2kl"},
             {"number": 25, "type": "1kl"},
             {"number": 26, "type": "1kl"}
+        ]
+    },
+    {
+        "category": "TLK",
+        "number": "15101",
+        "name": "WYBRZEŻE",
+        "station1": {
+            "name": "Warszawa Wschodnia",
+            "time": "08:11"
+        },
+        "station2": {
+            "name": "Gdańsk Główny",
+            "time": "11:34"
+        },
+        "journeyTime": {
+            hours: 3,
+            minutes: 23
+        },
+        "prices": {
+            "class2_nores": 34.99,
+            "class2": 44.99,
+            "class1": 89.99
+        },
+        "consist": [
+            {"number": 26, "type": "1kl"},
+            {"number": 25, "type": "1kl"},
+            {"number": 24, "type": "2kl"},
+            {"number": 23, "type": "2kl"},
+            {"number": 22, "type": "2kl"},
+            {"number": 21, "type": "2kl"}
         ]
     }
 ]
@@ -924,18 +953,42 @@ let cart = [
                 },
                 "halfPrice": false
             }
-        ]
+        ],
+        "paid": false
+    },
+    {
+        "date": "2025-01-28",
+        "train": mockTrains[2],
+        "passengers": [
+            {
+                "name": "Jan Kowalski",
+                "reservation": {
+                    "wagon": 21,
+                    "seat": 47
+                },
+                "halfPrice": false
+            },
+            {
+                "name": "Anna Kowalska",
+                "reservation": {
+                    "wagon": 21,
+                    "seat": 48
+                },
+                "halfPrice": false
+            }
+        ],
+        "paid": false
     }
 ];
 
 // Reszta kodu
 
-function getClassFromReservation(reservation) {
+function getClassFromReservation(train, reservation) {
     if (reservation == undefined) {
         return "class2_nores";
     }
     let targetWagon = null;
-    currentTrain.consist.forEach(wagon => {
+    train.consist.forEach(wagon => {
         if (wagon.number == reservation.wagon) {
             targetWagon = wagon;
         }
@@ -948,14 +1001,14 @@ function getClassFromReservation(reservation) {
     return mockWagonTypes[targetWagon.type].class;
 }
 
-function getReservationPrice(reservation) {
-    return currentTrain.prices[getClassFromReservation(reservation)];
+function getReservationPrice(train, reservation) {
+    return train.prices[getClassFromReservation(train, reservation)];
 }
 
-function getTotalPrice() {
+function getTotalPrice(train, passengers) {
     let total = 0;
     passengers.forEach(passenger => {
-        total += getReservationPrice(passenger.reservation);
+        total += getReservationPrice(train, passenger.reservation);
     });
     return total;
 }
@@ -1014,6 +1067,13 @@ function isSeatChosen(number) {
     return found;
 }
 
+function updateStripeCart() {
+    let stripeCart = $("#stripecart");
+    stripeCart.text("Koszyk (" + cart.length + ")");
+}
+
+// Zarzadzanie pasazerami
+
 function addPassenger() {
     // Zapisz dane z formularza aby je przywrocic przy regeneracji tabeli
     savePassengers();
@@ -1063,6 +1123,43 @@ function savePassengers() {
     })
 }
 
+// Zarzadzanie biletami
+
+function addTicket() {
+    let ticket = {
+        "date": selectedDate,
+        "train": currentTrain,
+        "passengers": passengers,
+        "paid": false
+    };
+    cart.push(ticket);
+    // Nie odswiezamy tutaj listy biletow bo w momencie dodawania biletu jestesmy na ekranie potwierdzenia, i tak nie bedzie tego widac
+    updateStripeCart();
+}
+
+function removeTicket(n) {
+    cart.splice(n - 1, 1);
+    generateCartList();
+    updateStripeCart();
+}
+
+// Robienie divow itp
+
+function generateTrainTimesInDiv(train, div) {
+    div.append("<div class=\"station left\">");
+    div.append("<div class=\"separator\">");
+    div.append("<div class=\"station right\">");
+    div.find(".station.left").append("<div class=\"sname\">");
+    div.find(".station.left").append("<div class=\"time\">");
+    div.find(".station.left .sname").html(train.station1.name);
+    div.find(".station.left .time").html(train.station1.time);
+    div.find(".separator").html(">>>");
+    div.find(".station.right").append("<div class=\"sname\">");
+    div.find(".station.right").append("<div class=\"time\">");
+    div.find(".station.right .sname").html(train.station2.name);
+    div.find(".station.right .time").html(train.station2.time);
+}
+
 function generateTrainList() {
     let trainList = $("#pagetrain #trains");
     trainList.empty();
@@ -1080,18 +1177,7 @@ function generateTrainList() {
         trainDiv.find(".traininfo .name").html(train.category + "&nbsp;" + train.number + "<br/>" + train.name);
         trainDiv.find(".traininfo .duration").html("Czas jazdy: <b>" + train.journeyTime.hours + "h&nbsp;" + train.journeyTime.minutes + "min</b>");
         // Przyjazd i odjazd
-        trainDiv.find(".times").append("<div class=\"station left\">");
-        trainDiv.find(".times").append("<div class=\"separator\">");
-        trainDiv.find(".times").append("<div class=\"station right\">");
-        trainDiv.find(".times .station.left").append("<div class=\"sname\">");
-        trainDiv.find(".times .station.left").append("<div class=\"time\">");
-        trainDiv.find(".times .station.left .sname").html(train.station1.name);
-        trainDiv.find(".times .station.left .time").html(train.station1.time);
-        trainDiv.find(".times .separator").html(">>>");
-        trainDiv.find(".times .station.right").append("<div class=\"sname\">");
-        trainDiv.find(".times .station.right").append("<div class=\"time\">");
-        trainDiv.find(".times .station.right .sname").html(train.station2.name);
-        trainDiv.find(".times .station.right .time").html(train.station2.time);
+        generateTrainTimesInDiv(train, trainDiv.find(".times"));
         // Ceny biletow
         trainDiv.find(".prices").append("<div class=\"price\">");
         trainDiv.find(".prices .price").last().append("<div class=\"class\">");
@@ -1217,7 +1303,7 @@ function generateTicketBase(train) {
     generateTicketPassengerList();
     // Laczna cena
     ticketDiv.find(".total").append("<div class=\"price\">");
-    ticketDiv.find(".total .price").text("Razem: " + price(getTotalPrice()) + " zł");
+    ticketDiv.find(".total .price").text("Razem: " + price(getTotalPrice(currentTrain, passengers)) + " zł");
     // Przyciski
     ticketDiv.find("#addpassenger").text("Dodaj pasażera");
     ticketDiv.find("#addpassenger").on("click", () => {
@@ -1225,6 +1311,7 @@ function generateTicketBase(train) {
     });
     ticketDiv.find("#addticket").text("Do koszyka");
     ticketDiv.find("#addticket").on("click", () => {
+        addTicket();
         setPage("ticketadd");
     });
 }
@@ -1237,7 +1324,7 @@ function generateTicketPassengerList() {
     passengers.forEach(passenger => {
         // Use n, because i marshalled as a parameter will not keep its value properly!
         let n = i;
-        let passengerClass = getClassFromReservation(passenger.reservation);
+        let passengerClass = getClassFromReservation(currentTrain, passenger.reservation);
         passengersDiv.append("<div class=\"passenger\">");
         let passengerDiv = passengersDiv.find(".passenger").last();
         // Rubryczki na kazda sekcje danych pasazera
@@ -1275,12 +1362,75 @@ function generateTicketPassengerList() {
             })
         }
         // Cena
-        passengerDiv.find(".price").text("Cena: " + price(getReservationPrice(passenger.reservation)) + " zł");
+        passengerDiv.find(".price").text("Cena: " + price(getReservationPrice(currentTrain, passenger.reservation)) + " zł");
         i++;
     });
     // zaktualizujmy jeszcze laczna cene
     let ticketDiv = $("#pageticket #ticket");
-    ticketDiv.find(".total .price").text("Razem: " + price(getTotalPrice()) + " zł");
+    ticketDiv.find(".total .price").text("Razem: " + price(getTotalPrice(currentTrain, passengers)) + " zł");
+}
+
+function generateCartList() {
+    let cartDiv = $("#pagecart #cart");
+    cartDiv.empty();
+    let totalPrice = 0;
+    if (cart.length == 0) {
+        // Koszyk jest pusty, wyswietl stosowna wiadomosc.
+        cartDiv.append("<div class=\"cartentry info\">");
+        cartDiv.find(".cartentry").text("Koszyk jest pusty.");
+    } else {
+        let i = 1;
+        cart.forEach(ticket => {
+            let n = i;
+            let ticketPrice = getTotalPrice(ticket.train, ticket.passengers);
+            if (!ticket.paid) {
+                totalPrice += ticketPrice;
+            }
+            cartDiv.append("<div class=\"cartentry info\">");
+            let ticketDiv = cartDiv.find(".cartentry").last();
+            // Zolte tlo jezeli bilet nieoplacony
+            if (!ticket.paid) {
+                ticketDiv.addClass("unpaid");
+            }
+            // Rubryczki na kazda sekcje danych biletu
+            ticketDiv.append("<div class=\"dateinfo\">");
+            ticketDiv.append("<div class=\"traininfo\">");
+            ticketDiv.append("<div class=\"times\">");
+            ticketDiv.append("<div class=\"price\">");
+            ticketDiv.append("<div class=\"buttons\">");
+            // Data przejazdu
+            ticketDiv.find(".dateinfo").text(date(ticket.date));
+            // Informacje o pociagu
+            ticketDiv.find(".traininfo").append("<div class=\"name\">");
+            ticketDiv.find(".traininfo").append("<div class=\"duration\">");
+            ticketDiv.find(".traininfo").append("<div class=\"duration\">");
+            ticketDiv.find(".traininfo .name").html(ticket.train.category + "&nbsp;" + ticket.train.number + "<br/>" + ticket.train.name);
+            ticketDiv.find(".traininfo .duration").first().html("Czas jazdy: <b>" + ticket.train.journeyTime.hours + "h&nbsp;" + ticket.train.journeyTime.minutes + "min</b>");
+            ticketDiv.find(".traininfo .duration").last().html("<b>" + ticket.passengers.length + "</b>&nbsp;" + (ticket.passengers.length == 1 ? "pasażer" : "pasażerów"));
+            // Odjazd i przyjazd
+            generateTrainTimesInDiv(ticket.train, ticketDiv.find(".times"));
+            // Cena biletu
+            ticketDiv.find(".price").append("<div class=\"header\">");
+            ticketDiv.find(".price").append("<div class=\"value\">");
+            ticketDiv.find(".price .header").text(ticket.paid ? "Zapłacono:" : "Do zapłaty:");
+            ticketDiv.find(".price .value").html(price(ticketPrice) + "&nbsp;zł");
+            // Przyciski
+            if (!ticket.paid) {
+                ticketDiv.find(".buttons").append("<button id=\"ticketedit_" + i + "\">");
+                ticketDiv.find(".buttons button").last().text("Edytuj");
+                ticketDiv.find(".buttons").append("<button id=\"ticketdel_" + i + "\">");
+                ticketDiv.find(".buttons button").last().html("<span class=\"danger\">Usuń</span>");
+                ticketDiv.find(".buttons button").last().on("click", () => {
+                    removeTicket(n);
+                })
+            }
+            i++;
+        });
+    }
+    // Zaktualizujmy laczna cene oraz przycisk (nieaktywny jesli 0).
+    let cartSummaryDiv = $("#pagecart .cartsummary");
+    cartSummaryDiv.find(".price .value").text(price(totalPrice) + " zł");
+    cartSummaryDiv.find("#payment").attr("disabled", totalPrice == 0);
 }
 
 function ready() {
@@ -1292,6 +1442,13 @@ function ready() {
         stripeContent.find(".stripeline").last().append("<div class=\"stripelwrap\">");
         stripeContent.find(".stripelwrap").last().text(message);
     });
+
+    let stripeCart = $("#stripecart");
+    stripeCart.on("click", () => {
+        setPage("cart");
+        generateCartList();
+    })
+    updateStripeCart();
 
     // MAIN PAGE
 
@@ -1312,6 +1469,7 @@ function ready() {
     })
 
     // ADD TO CART PAGE
+
     let returnTrainBtn = $("#pageticketadd #newreturnsearch");
     returnTrainBtn.on("click", () => {
         setPage("train");
@@ -1323,6 +1481,18 @@ function ready() {
     let cartBtn = $("#pageticketadd #gotocart");
     cartBtn.on("click", () => {
         setPage("cart");
+        generateCartList();
+    })
+
+    // CART PAGE
+
+    let paymentBtn = $("#pagecart #payment");
+    paymentBtn.on("click", () => {
+        setPage("payment");
+    })
+    let menuBtn2 = $("#pagecart #mainpage");
+    menuBtn2.on("click", () => {
+        setPage("main");
     })
 }
 

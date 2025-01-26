@@ -20,7 +20,6 @@ body {
 /* Pasek pod banerem (informacje, koszyk) */
 
 #stripestick {
-    position: sticky;
     top: 0px;
     z-index: -1;
 }
@@ -37,7 +36,6 @@ body {
     flex-grow: 1;
     height: 100%;
     align-content: center;
-    white-space: nowrap;
 }
 
 #stripetext .stripeline {
@@ -61,6 +59,10 @@ body {
     height: 100%;
     text-align: center;
     align-content: center;
+}
+
+#stripecart:hover {
+    background-image: linear-gradient(#aaa, #888);
 }
 
 /* Tresc strony */
@@ -658,6 +660,10 @@ body {
     margin-top: 10px;
     margin-bottom: 10px;
     padding: 10px;
+}
+
+.info.unpaid {
+    background-color: #ed8c;
 }
 
 .success {
