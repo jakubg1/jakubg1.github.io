@@ -11,17 +11,23 @@ function date(val) {
 
 // Mocki (dane ktore powinny leciec z serwera)
 
+// Bardzo proste do odkrecenia.
+// Wystarczy zamienic `fakeAjax` na `$.get`, a dane na adres endpointu.
+async function fakeAjax(data, onGet) {
+    // Symulacja wolnego internetu, czyli czekamy chwile
+    await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 5500));
+    // I wywolujemy callback
+    onGet(data);
+}
+
 let mockMessages = [
     "Witamy w Systemie Sprzedaży Biletów! To jest miejsce na wszelkie utrudnienia.",
     "W chwili obecnej trwają prace serwisowe. Za utrudnienia przepraszamy.",
-    "Obecnie nie działają:",
-    "System płatności",
-    "A nawet zegar się zepsuł... Trzeba wymienić baterie.",
+    "Zegar się zepsuł... Trzeba wymienić baterie.",
     "Fajnie by było gdyby:",
     "Była responsywność.",
     "Możliwe było cofanie do poprzedniego kroku.",
     "System nie przepuszczał dodania biletu bez wypełnienia imienia i nazwiska.",
-    "Płatność w koszyku wymagała adresu e-mail.",
     "Możliwe było edytowanie biletów.",
     "Miejsca zajęte w innych biletach były w tych samych pociągach w tym samym dniu zajęte."
 ];
@@ -1072,6 +1078,28 @@ function updateStripeCart() {
     stripeCart.text("Koszyk (" + cart.length + ")");
 }
 
+function initializePayment() {
+    setPage("payment");
+    let infoDiv = $("#pagepayment .info");
+    let successDiv = $("#pagepayment .success");
+    let failureDiv = $("#pagepayment .failure");
+    infoDiv.addClass("visible");
+    successDiv.removeClass("visible");
+    failureDiv.removeClass("visible");
+    // Prosty (fake) AJAX: uderzamy w "endpoint" i dostajemy [0] lub [1], w zaleznosci od tego
+    // bedziemy udawac ze transakcja przeszla albo nie.
+    fakeAjax([Math.floor(Math.random() * 2)], data => {
+        console.log(data);
+        infoDiv.removeClass("visible");
+        if (data[0] == 1) {
+            markTicketsAsPaid();
+            successDiv.addClass("visible");
+        } else {
+            failureDiv.addClass("visible");
+        }
+    });
+}
+
 // Zarzadzanie pasazerami
 
 function addPassenger() {
@@ -1104,6 +1132,8 @@ function reservePassenger(n) {
         "seat": selectedSeat
     };
     selectedSeatToChosen();
+    // Zapisz dane z formularza aby je przywrocic przy regeneracji tabeli
+    savePassengers();
     generateTicketPassengerList();
 }
 
@@ -1111,6 +1141,8 @@ function unreservePassenger(n) {
     let passenger = passengers[n - 1];
     unchooseSeat(passenger.reservation.seat);
     passenger.reservation = null;
+    // Zapisz dane z formularza aby je przywrocic przy regeneracji tabeli
+    savePassengers();
     generateTicketPassengerList();
 }
 
@@ -1133,14 +1165,19 @@ function addTicket() {
         "paid": false
     };
     cart.push(ticket);
-    // Nie odswiezamy tutaj listy biletow bo w momencie dodawania biletu jestesmy na ekranie potwierdzenia, i tak nie bedzie tego widac
-    updateStripeCart();
+    generateCartList();
 }
 
 function removeTicket(n) {
     cart.splice(n - 1, 1);
     generateCartList();
-    updateStripeCart();
+}
+
+function markTicketsAsPaid() {
+    cart.forEach(ticket => {
+        ticket.paid = true;
+    });
+    generateCartList();
 }
 
 // Robienie divow itp
@@ -1431,6 +1468,8 @@ function generateCartList() {
     let cartSummaryDiv = $("#pagecart .cartsummary");
     cartSummaryDiv.find(".price .value").text(price(totalPrice) + " zł");
     cartSummaryDiv.find("#payment").attr("disabled", totalPrice == 0);
+    // A takze napis w belce o ilosci biletow
+    updateStripeCart();
 }
 
 function ready() {
@@ -1446,9 +1485,17 @@ function ready() {
     let stripeCart = $("#stripecart");
     stripeCart.on("click", () => {
         setPage("cart");
-        generateCartList();
     })
     updateStripeCart();
+
+    // Initialize all "Go to main menu" or "Go to cart" messages
+    $("button#gotomain").on("click", () => {
+        setPage("main");
+    })
+    $("button#gotocart").on("click", () => {
+        setPage("cart");
+    })
+    generateCartList();
 
     // MAIN PAGE
 
@@ -1474,21 +1521,12 @@ function ready() {
     returnTrainBtn.on("click", () => {
         setPage("train");
     })
-    let menuBtn = $("#pageticketadd #gotomain");
-    menuBtn.on("click", () => {
-        setPage("main");
-    })
-    let cartBtn = $("#pageticketadd #gotocart");
-    cartBtn.on("click", () => {
-        setPage("cart");
-        generateCartList();
-    })
 
     // CART PAGE
 
     let paymentBtn = $("#pagecart #payment");
     paymentBtn.on("click", () => {
-        setPage("payment");
+        initializePayment();
     })
     let menuBtn2 = $("#pagecart #mainpage");
     menuBtn2.on("click", () => {
