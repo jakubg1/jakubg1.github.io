@@ -1094,7 +1094,6 @@ function initializePayment() {
     // Prosty (fake) AJAX: uderzamy w "endpoint" i dostajemy [0] lub [1], w zaleznosci od tego
     // bedziemy udawac ze transakcja przeszla albo nie.
     fakeAjax([Math.floor(Math.random() * 2)], data => {
-        console.log(data);
         infoDiv.removeClass("visible");
         if (data[0] == 1) {
             markTicketsAsPaid();
