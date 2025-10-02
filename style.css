@@ -3,11 +3,16 @@ body, input, button {
 }
 
 body {
-    background-image: linear-gradient(rgb(222, 172, 56), rgb(161, 200, 20));
+    background-image: linear-gradient(navy, rgb(47, 0, 98));
     background-repeat: no-repeat;
     background-attachment: fixed;
+    color: #eee;
     font-size: 16px;
     margin: 0px;
+}
+
+a {
+    color: #8ce;
 }
 
 #content {
@@ -16,9 +21,15 @@ body {
     margin: auto;
 }
 
+#footer {
+    font-size: 80%;
+    border-top: 1px solid gray;
+    margin-top: 10px;
+}
+
 p.addendum {
     font-size: 80%;
-    color: #444;
+    color: #888;
     margin-top: 0px;
     margin-bottom: 0px;
 }
